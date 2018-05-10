@@ -1,15 +1,14 @@
 package kr.or.dgit.Coffe_proj;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
+@SuppressWarnings("serial")
 public class UiCoffeMain extends JFrame {
+	public UiCoffeMain() {
+	}
 
-	private JPanel contentPane;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {

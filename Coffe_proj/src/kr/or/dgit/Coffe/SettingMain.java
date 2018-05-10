@@ -39,7 +39,7 @@ public class SettingMain extends JFrame {
 	}
 
 	private void initComponents() {
-		setTitle("Setting");
+		setTitle("DB관리메뉴");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 127);
 		contentPane = new JPanel();
