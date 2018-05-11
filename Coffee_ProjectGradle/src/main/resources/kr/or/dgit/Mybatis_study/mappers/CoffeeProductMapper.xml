@@ -14,7 +14,7 @@
 	</sql>
 
 	<sql id="updateSql">
-		update product set code=#{code}
+		update product set prdName=#{prdName}
 	</sql>
 
 	<sql id="whereSql">
