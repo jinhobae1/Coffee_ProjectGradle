@@ -2,76 +2,68 @@ package kr.or.dgit.Coffe_service;
 
 import java.util.List;
 
-import javax.swing.JOptionPane;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
-import kr.or.dgit.Coffe.dao.ProductDao;
-import kr.or.dgit.Coffe.dao.ProductSalesDao;
-import kr.or.dgit.Coffe.dao.exception.DAOException;
 import kr.or.dgit.Coffe.dto.Product;
-import kr.or.dgit.Coffe.dto.ProductSales;
-
+import kr.or.dgit.Mybatis_study.util.MybatisSqlSessionFactory;
 
 public class ProductService {
-	private ProductDao prdDao;
-	private ProductSalesDao salesDao;
-	
-	public ProductService() {
-		this.prdDao = ProductDao.getInstance();
-		this.salesDao = ProductSalesDao.getInstance();
+	private static final Log log = LogFactory.getLog(ProductService.class);
+
+	private static final ProductService instance = new ProductService();
+	private String namespace = "kr.or.dgit.Coffe.dao.ProductDao";
+	private SqlSessionFactory sessionFactory;
+
+	private ProductService() {
+		sessionFactory = MybatisSqlSessionFactory.getSqlSessionFactory();
 	}
 
-	public void insertProductSale(ProductSales sales) {
-		String message = null;
-		try {
-			salesDao.insertItem(sales);
-			message = "입력되었습니다.";
-		} catch (DAOException e) {
-			message = e.getErrorCode();
-		} finally {
-			JOptionPane.showMessageDialog(null, message);
+	public static ProductService getInstance() {
+		return instance;
+	}
+
+	public List<Product> selectProductAll() {
+		log.debug("selectProductAll()");
+		try (SqlSession sqlSession = sessionFactory.openSession()) {
+			return sqlSession.selectList(namespace + ".selectProductByNo");
 		}
 	}
 	
-	public List<Product> selectProductAllItem() {
-		List<Product> list = null;
-		try {
-			list = prdDao.selectAllItem();
-		} catch (DAOException e) {
-			JOptionPane.showMessageDialog(null, e.getErrorCode());
+	public Product selectProductByNo(Product product) {
+		log.debug("selectProductByNo()");
+		try (SqlSession sqlSession = sessionFactory.openSession()) {
+			return sqlSession.selectOne(namespace + ".selectProductByNo",product);
 		}
-		
-		return list;
 	}
-	
-	public List<ProductSales> selectAllItemBySell() {
-		List<ProductSales> list = null;
-		try {
-			list = salesDao.selectAllItemByProc("proc_rank_sell()");
-		} catch (DAOException e) {
-			JOptionPane.showMessageDialog(null, e.getErrorCode());
+
+	public int insertProduct(Product product) {
+		log.debug("insertProduct()");
+		try (SqlSession sqlSession = sessionFactory.openSession()) {
+			int res = sqlSession.insert(namespace + ".insertProduct", product);
+			sqlSession.commit();
+			return res;
 		}
-		
-		return list;
 	}
-	
-	public List<ProductSales> selectAllItemByMargin() {
-		List<ProductSales> list = null;
-		try {
-			list = salesDao.selectAllItemByProc("proc_rank_margin()");
-		} catch (DAOException e) {
-			JOptionPane.showMessageDialog(null, e.getErrorCode());
+
+	public int deleteProduct(Product product) {
+		log.debug("deleteProduct()");
+		try (SqlSession sqlSession = sessionFactory.openSession()) {
+			int res = sqlSession.delete(namespace + ".deleteProduct", product);
+			sqlSession.commit();
+			return res;
 		}
-		
-		return list;
 	}
-	
-	public Product selectProductByCode(String code) {
-		Product searchPrd = null;
-		try {
-			searchPrd = prdDao.selectItemByCode(code);
-		} catch (DAOException e) {
-			JOptionPane.showMessageDialog(null, e.getErrorCode());
+
+	public int updateProduct(Product product) {
+		log.debug("updateProduct()");
+		try (SqlSession sqlSession = sessionFactory.openSession()) {
+			int res = sqlSession.update(namespace + ".updateProduct", product);
+			sqlSession.commit();
+			return res;
 		}
-		return searchPrd;
 	}
+
 }

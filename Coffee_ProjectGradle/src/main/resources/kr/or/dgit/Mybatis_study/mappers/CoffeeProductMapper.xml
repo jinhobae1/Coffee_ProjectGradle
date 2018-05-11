@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.dgit.Coffe.dao.ProductDao">
+	<sql id="selectSql">
+		select code,prdName from product
+	</sql>
+
+	<sql id="insertSql">
+		insert into product values(#{code},#{prdName})
+	</sql>
+
+	<sql id="deleteSql">
+		delete from product
+	</sql>
+
+	<sql id="updateSql">
+		update product set code=#{code}
+	</sql>
+
+	<sql id="whereSql">
+		<where>
+			<if test="code !=null">
+				code=#{code}
+			</if>
+		</where>
+	</sql>
+
+	<select id="selectProductAll" resultType="Product">
+		<include refid="selectSql"></include>
+	</select>
+
+	<select id="selectProductByNo" parameterType="Product"
+		resultType="Product">
+		<include refid="selectSql"></include>
+		<include refid="whereSql"></include>
+	</select>
+
+	<select id="insertProduct" parameterType="Product">
+		<include refid="insertSql"></include>
+	</select>
+
+	<select id="deleteProduct" parameterType="Product">
+		<include refid="deleteSql"></include>
+		<include refid="whereSql"></include>
+	</select>
+
+	<select id="updateProduct" parameterType="Product">
+		<include refid="updateSql"></include>
+		<include refid="whereSql"></include>
+	</select>
+
+
+</mapper>

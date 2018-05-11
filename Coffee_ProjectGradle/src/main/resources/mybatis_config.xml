@@ -5,7 +5,8 @@
 <configuration>
 <properties resource="application.properties"/>
 <typeAliases>
-	<typeAlias type="kr.or.dgit.Mybatis_study.dto.Student" alias="Student"/>
+	<typeAlias type="kr.or.dgit.Coffe.dto.Product"/>
+	<typeAlias type="kr.or.dgit.Coffe.dto.ProductSales"/>
 </typeAliases>
   <environments default="development">
     <environment id="development">
@@ -19,6 +20,7 @@
     </environment>
   </environments>
   <mappers>
-    <mapper resource="kr/or/dgit/Mybatis_study/mappers/StudentMapper.xml"/>
+    <mapper resource="kr/or/dgit/Mybatis_study/mappers/CoffeeProductMapper.xml"/>
+     <mapper resource="kr/or/dgit/Mybatis_study/mappers/CoffeeSaleMapper.xml"/>
   </mappers>
 </configuration>

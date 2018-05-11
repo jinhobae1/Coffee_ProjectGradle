@@ -10,7 +10,7 @@
    </Appenders>
 
    <Loggers>
-      <Logger name="kr.or.dgit.Mybatis_study" level="trace" additivity="false">
+      <Logger name="kr.or.dgit.Coffee_ProjectGradle" level="trace" additivity="false">
          <AppenderRef ref="Console" />
          <!-- <AppenderRef ref="file" /> -->
       </Logger>

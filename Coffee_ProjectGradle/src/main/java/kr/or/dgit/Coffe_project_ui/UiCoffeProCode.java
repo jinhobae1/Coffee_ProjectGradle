@@ -1,4 +1,4 @@
-package kr.or.dgit.Coffe_project_ui;
+/*package kr.or.dgit.Coffe_project_ui;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -234,3 +234,4 @@ public class UiCoffeProCode extends JFrame implements ActionListener {
 		rankMargin.setVisible(true);
 	}
 }
+*/
