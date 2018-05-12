@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.dgit.ragnarak.dao.ProductDao">
+
+	<select id="selectProductByNo" resultType="product">
+		select code, name from product where code=#{code}
+	</select>
+	
+	<insert id="insertProduct" parameterType="product">
+		insert into product values (#{code},#{name})
+	</insert>
+	
+	<update id="updateProduct" parameterType="product">
+		update product set code=#{code}, name=#{name} where code=#{code}
+	</update>
+	
+	<delete id="deleteProduct" parameterType="product">
+		delete from product where code = #{code};
+	</delete>
+
+</mapper>

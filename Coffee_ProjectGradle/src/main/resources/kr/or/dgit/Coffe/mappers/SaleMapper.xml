@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.dgit.ragnarak.dao.SaleDao">
+<resultMap type="sale" id="saleResult">
+	<result property="price" column="price"/>
+	<result property="saleCnt" column="saleCnt"/>
+	<result property="marginRate" column="marginRate"/>
+	<result property="product.code" column="code"/>
+	<result property="product.name" column="name"/>
+</resultMap>
+
+	<select id="selectSaleByAll" resultMap="saleResult">
+		select s.code, p.name, price, saleCnt, marginRate
+		from sale s, product p where s.code=p.code
+	</select>
+	
+	<select id="selectSaleByNo" parameterType="String" resultType="sale">
+		select no, code, price, saleCnt, marginRate from sale where code=#{code}
+	</select>
+	
+	<insert id="insertSale" parameterType="sale">
+		insert into sale(code,price,saleCnt,marginRate) values (#{product.code},#{price},#{saleCnt},#{marginRate})
+	</insert>
+	
+	<insert id="insertProduct" parameterType="product">
+		insert into product(code, name) values (#{code},#{name})
+	</insert>
+	
+	<update id="updateProduct" parameterType="product">
+		update sale set price = #{price}, saleCnt=#{saleCnt},marginRate=#{marginRate} where code=#{product.code};
+	</update>
+	
+	<delete id="deleteProduct" parameterType="product">
+		delete from sale where code = #{product.code};
+	</delete>
+	
+	<resultMap type="rank" id="rankResult">
+		<result property="rank" column="rank"/>
+		<result property="code" column="code"/>
+		<result property="name" column="name"/>
+		<result property="price" column="price"/>
+		<result property="saleCnt" column="saleCnt"/>
+		<result property="supply" column="supply"/>
+		<result property="surtax" column="surtax"/>
+		<result property="selling" column="selling"/>
+		<result property="marginRate" column="marginRate"/>
+		<result property="marginPrice" column="marginPrice"/>
+	</resultMap>
+	
+	<select id="callSaleDetail" statementType="CALLABLE" parameterType="HashMap" resultMap="rankResult">
+		{call proc_saledetail_orderby(#{isSalePrice, mode=IN, jdbcType=BOOLEAN})};
+	</select>
+	
+	<select id="getTotal" resultType="HashMap">
+		select  sum(@saleprice:=price*salecnt) supply_price,
+        sum(@addtax := ceil(@saleprice/11)) addtax_price,
+        sum(@supprice := @saleprice - @addtax) sale_price,
+        sum(@marPrice := round(@supprice * (marginrate/100))) margin_price
+		from  sale
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+

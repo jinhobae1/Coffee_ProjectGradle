@@ -1,0 +1,26 @@
+
+-- 순위
+create procedure proc_saledetail_orderby(in isSalePrice boolean)
+begin
+	set @score:=0, @rank:=0;      
+    select greatest( @rank := if(@score = if(isSalePrice, 판매액, 마진액), @rank, @rank + 1),
+           least(0, @score := if(isSalePrice,판매액,마진액)) ) as rank,         
+           code, name, 가격 price, 판매수량 saleCnt, 공급가액 supply, 부가세액 surtax, 판매액 selling, 마진율 marginRate, 마진액 marginPrice   
+    from (select no, s.code code, name, price 가격, salecnt 판매수량, 
+                 @saleprice:=price*salecnt 판매액, @addtax := ceil(@saleprice/11) 부가세액,
+                 @supprice := @saleprice - @addtax 공급가액,
+                 marginrate 마진율,
+                 @marPrice := round(@supprice * (marginrate/100)) 마진액
+          from  sale s join product p on s.code = p.code ) t   
+    order by if(isSalePrice,판매액,마진액) desc;    
+end;
+
+-- 합계
+create procedure getTotal()
+begin
+	select  sum(@saleprice:=price*salecnt) supply_price,
+        sum(@addtax := ceil(@saleprice/11)) addtax_price,
+        sum(@supprice := @saleprice - @addtax) sale_price,
+        sum(@marPrice := round(@supprice * (marginrate/100))) margin_price
+	from  sale;
+end;

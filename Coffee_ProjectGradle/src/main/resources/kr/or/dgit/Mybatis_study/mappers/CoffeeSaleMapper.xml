@@ -1,5 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.dgit.Coffe.dao.ProductSalesDao">
-	
+	<resultMap type="ProductSales" id="salesResult">
+		<result property="product.code" column="code" />
+		<result property="unitCost" column="unit_cost" />
+		<result property="quantity" column="quantity" />
+		<result property="marginPrice" column="per_margin" />
+	</resultMap>
+
+	<sql id="selectSql">
+		select code,unit_cost,quantity,per_margin from sales
+	</sql>
+
+	<sql id="insertSql">
+		insert into sales
+		values(#{code},#{unit_cost},#{quantity},#{per_margin})
+	</sql>
+
+	<sql id="deleteSql">
+		delete from sales
+	</sql>
+
+	<sql id="updateSql">
+		update sale set
+		code=#{code},unit_cost=#{unit_cost},per_margin=#{per_margin}
+	</sql>
+
+	<sql id="whereSql">
+		<where>
+			<if test="code!=null">
+				code=#{code}
+			</if>
+		</where>
+	</sql>
+
+	<select id="selectSaleByAll" parameterType="ProductSales"
+		resultMap="salesResult">
+		<include refid="selectSql" />
+	</select>
+
+	<select id="selectSaleByNo" parameterType="ProductSales"
+		resultMap="salesResult">
+		<include refid="selectSql" />
+		<include refid="whereSql" />
+	</select>
+
+	<select id="insertSale" parameterType="ProductSales">
+		<include refid="insertSql" />
+	</select>
+
+	<select id="deleteSale" parameterType="ProductSales">
+		<include refid="deleteSql" />
+	</select>
+
+	<select id="updateSale" parameterType="ProductSales">
+		<include refid="updateSql" />
+		<include refid="whereSql" />
+	</select>
+
+<!-- 	<select id="getTotal" resultMap="HashMap">
+		{call proc_sale_stat()}
+	</select> -->
+
+
 </mapper>

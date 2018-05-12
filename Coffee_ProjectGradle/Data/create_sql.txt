@@ -1,0 +1,82 @@
+﻿-- 커피전문점
+DROP SCHEMA IF EXISTS coffee_project;
+
+-- 커피전문점
+CREATE SCHEMA coffee_project;
+
+CREATE TABLE `product` (
+  `code` varchar(4) NOT NULL COMMENT '제품코드',
+  `prdname` varchar(10) NOT NULL COMMENT '제품명',
+  PRIMARY KEY (`code`)
+) CHARSET=utf8 COMMENT='제품코드표';
+
+
+CREATE TABLE `sales` (
+  `code` varchar(4) NOT NULL COMMENT '제품코드',
+  `unit_cost` int(11) DEFAULT NULL COMMENT '제품단가',
+  `quantity` int(11) DEFAULT NULL COMMENT '판매수량',
+  `per_margin` int(11) DEFAULT NULL COMMENT '마진율',
+  PRIMARY KEY (`code`),
+  CONSTRAINT `FK_product_TO_sales` FOREIGN KEY (`code`) REFERENCES `product` (`code`)
+) CHARSET=utf8 COMMENT='제품판매';
+
+
+DROP PROCEDURE IF EXISTS proc_rank_sell;
+DELIMITER $$	
+
+
+CREATE PROCEDURE proc_rank_sell()
+BEGIN
+	set @sup := 0, @tax := 0, @sell := 0, @marp := 0, @rank := 0, @score := 0, @point:=1;
+	select code, prdname, unit_cost, quantity, sellprice, tax, suprice, per_margin, marprice,
+		greatest( 
+			@rank := if(@score = sellprice, @rank, @rank+ @point),
+			least(0, @point:=if(@score = sellprice, @point+1, 1), @score := sellprice)
+		) as rank
+	from (
+		select p.code, p.prdname, unit_cost, quantity, per_margin, 
+			(@sell := (unit_cost*quantity)) as sellprice, 
+			(@tax := ceil(@sell / 11)) as tax,
+			(@sup := @sell - @tax) as suprice,
+			(@marp := round(@sup * (per_margin/100))) as marprice
+		from sales s
+		join product p on s.code = p.code
+	) temp
+	order by sellprice desc;
+END 
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS proc_rank_margin;
+DELIMITER $$
+
+CREATE PROCEDURE proc_rank_margin()
+BEGIN
+	set @sup := 0, @tax := 0, @sell := 0, @marp := 0, @rank := 0, @score := 0;
+	select code, prdname, unit_cost, quantity, sellprice, tax, suprice, per_margin, marprice,
+		greatest( 
+			@rank := if(@score = marprice, @rank, @rank+ @point),
+			least(0, @point:=if(@score = marprice, @point+1, 1), @score := marprice)
+		) as rank
+	from (
+		select p.code, p.prdname, unit_cost, quantity, per_margin, 
+			(@sell := (unit_cost*quantity)) as sellprice, 
+			(@tax := ceil(@sell / 11)) as tax,
+			(@sup := @sell - @tax) as suprice,
+			(@marp := round(@sup * (per_margin/100))) as marprice
+		from sales s
+		join product p on s.code = p.code
+	) temp
+	order by sellprice desc;
+END
+DELIMITER ;
+
+insert into product values
+('A001', '아메리카노'),
+('A002', '카푸치노'),
+('A003', '헤이즐넛'),
+('A004', '에스프레소'),
+('B001', '딸기쉐이크'),
+('B002', '후르츠와인'),
+('B003', '팥빙수'),
+('B004', '아이스초코');

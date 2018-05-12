@@ -1,0 +1,31 @@
+﻿-- 커피판매관리
+DROP SCHEMA IF EXISTS coffee_project;
+
+-- 커피판매관리
+CREATE SCHEMA coffee_project;
+
+use coffee_project;
+
+-- 제품
+CREATE TABLE coffee_project.product (
+	code CHAR(4)     NOT NULL,
+	name VARCHAR(20) NULL,
+	primary key(code)     
+);
+
+-- 판매현황
+CREATE TABLE coffee_project.sale (
+	no         INT(11) NOT NULL auto_increment, 
+	code       CHAR(4) NOT NULL, 
+	price      INT(11) NOT NULL, 
+	saleCnt    INT(11) NOT NULL, 
+	marginRate INT(11) NOT NULL,
+	primary key(no),
+	foreign key(code) references product(code)
+);
+
+-- create and grant user
+grant select, insert, update, delete, trigger, Execute on coffee_project.* 
+to 'user_coffee_project' identified by 'rootroot';
+
+GRANT Select ON mysql.proc TO 'user_coffee_project'@'%' ;
